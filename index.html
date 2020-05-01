@@ -2,7 +2,7 @@
 <html>
   <head>
     <div id="screen">
-      <img id="screen-image" src="testimage.png" />
+      <img id="screen-image" src="plains_east.png" />
     </div>
   </head>
   <body>
@@ -57,37 +57,43 @@
       }
     </style>
     <script>
-      var rooms = [];
+      let MAP_SIZE = 13;
+
+      let plainTile = function (iX, iY) {
+        this.x = iX;
+        this.y = iY;
+        this.westImage = "plains.png";
+        this.northImage = "plains.png";
+        this.southImage = "plains.png";
+        this.eastImage = "plains_east.png";
+      };
+      let forestTile = function (iX, iY) {
+        this.x = iX;
+        this.y = iY;
+        this.westImage = "forest.png";
+        this.northImage = "forest.png";
+        this.southImage = "forest.png";
+        this.eastImage = "forest_east.png";
+      };
+
+      var rooms = [
+        new forestTile (6, 8), new plainTile (7, 8), new plainTile (8, 8), new plainTile (9, 8), new plainTile (10, 8),
+        new forestTile (6, 9), new plainTile (7, 9), new plainTile (8, 9), new plainTile (9, 9), new plainTile (10, 9),
+        new forestTile (6, 10), new forestTile (7, 10), new forestTile (8, 10), new plainTile (9, 10), new plainTile (10, 10),
+
+      ];
       var torches = [
-        { x: 3, y: 3, isLit: false },
-        { x: 5, y: 2, isLit: false },
-        { x: 0, y: 0, isLit: false },
-        { x: 1, y: 6, isLit: false },
+        { x: 9, y: 9, isLit: false },
+        { x: 10, y: 8, isLit: false },
+        { x: 5, y: 6, isLit: false },
+        { x: 6, y: 7, isLit: false },
+        { x: 9, y: 11, isLit: false },
+        { x: 4, y: 11, isLit: false },
       ];
 
-      function generateTestMap() {
-        for (let i = 0; i < 64; i++) {
-          if (i % 2 == 0) {
-            rooms.push({
-              x: i % 8,
-              y: Math.floor(i / 8),
-              image: "testimage5.png",
-            });
-          } else {
-            rooms.push({
-              x: i % 8,
-              y: Math.floor(i / 8),
-              image: "testimage.png",
-            });
-          }
-        }
-      }
-
-      generateTestMap();
-
       var direction = "east";
-      var x = 2,
-        y = 3;
+      var x = 7,
+        y = 9;
       let totalTorchesLit = 0;
       let lanternLight = 11; // -- amount of tiles the player can walk until lantern runs out
       let maxLanternLight = 11;
@@ -141,9 +147,9 @@
           x--;
         } else if (direction === "north" && y > 0) {
           y--;
-        } else if (direction === "east" && x < 7) {
+        } else if (direction === "east" && x < MAP_SIZE - 1) {
           x++;
-        } else if (direction === "south" && y < 7) {
+        } else if (direction === "south" && y < MAP_SIZE - 1) {
           y++;
         }
         console.log(x + "," + y + " " + lanternLight);
@@ -164,10 +170,46 @@
         }
       }
       function updateImage() {
-        var roomIndex = getIndexFromPosition(x, y);
-
+        let roomIndex = 0;
         if (lanternLight > 0) {
-          document.getElementById("screen-image").src = rooms[roomIndex].image;
+          if (direction === "west") {
+            if (x === 0) {
+              document.getElementById("screen-image").src =
+              "cliff.png";
+            } else {
+              roomIndex = getIndexFromPosition (x - 1, y);
+              document.getElementById("screen-image").src =
+              rooms[roomIndex].westImage;
+            }
+          } else if (direction === "north") {
+            if (y === 0) {
+              document.getElementById("screen-image").src =
+              "cliff.png";
+            } else {
+              roomIndex = getIndexFromPosition (x, y - 1);
+              document.getElementById("screen-image").src =
+              rooms[roomIndex].northImage;
+            }
+
+          } else if (direction === "east") {
+            if (x === MAP_SIZE - 1) {
+              document.getElementById("screen-image").src =
+              "cliff.png";
+            } else {
+              roomIndex = getIndexFromPosition (x + 1, y);
+              document.getElementById("screen-image").src =
+              rooms[roomIndex].eastImage;
+            }
+          } else if (direction === "south") {
+            if (y === MAP_SIZE - 1) {
+              document.getElementById("screen-image").src =
+              "cliff.png";
+            } else {
+              roomIndex = getIndexFromPosition (x, y + 1);
+              document.getElementById("screen-image").src =
+              rooms[roomIndex].southImage;
+            }
+          }
         } else {
           document.getElementById("screen-image").src = "complete-dark.png";
           document.getElementById("description-text").innerHTML =
