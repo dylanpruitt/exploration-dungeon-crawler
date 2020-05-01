@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+    <head>
+        <div id = "screen">
+            <img id = "screen-image" src = "testimage.png">
+        </div>
+    </head>
+    <body>
+        <button id = "left" onclick = "goLeft ()">Left</button>
+        <button id = "right" onclick = "goRight ()">Right</button>
+        <button id = "forward" onclick = "goForward ()">Go forward</button>
+
+        <style>
+            #screen {
+                position: absolute;
+                top: 5%;
+                left: 20%;
+                width: 60%;
+                height: 70%;
+                border: 2px solid whitesmoke;
+            }
+            #screen-image {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                width: 100%;
+                height: 100%;
+            }
+            #left {
+                position: absolute;
+                top: 80%;
+                left: 40%;
+            }
+            #right {
+                position: absolute;
+                top: 80%;
+                right: 45%;
+            }
+            #forward {
+                position: absolute;
+                top: 80%;
+                left: 45%;
+            }
+            body {
+                font-family: arial;
+                background-color: black;
+                color: white;
+            }
+        </style>
+        <script>
+            var rooms = [
+                { x: 0, y: 0, westImage: "testimageborder1.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 0, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 0, y: 2, westImage: "testimageborder1.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 0, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 0, y: 4, westImage: "testimageborder1.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 1, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 1, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 1, y: 2, westImage: "testimage5.png", northImage: "testimage15.png", southImage: "testimage2.png", eastImage: "testimage14.png"},
+                { x: 1, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 1, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
+                { x: 2, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 2, y: 1, westImage: "testimage5.png", northImage: "testimage7.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 2, y: 2, westImage: "testimage9.png", northImage: "testimage6.png", southImage: "testimage8.png", eastImage: "testimage.png"},
+                { x: 2, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 2, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimage.png"},
+                { x: 3, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 3, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage10.png"},
+                { x: 3, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 3, y: 3, westImage: "testimage13.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage16.png"},
+                { x: 3, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
+                { x: 4, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 4, y: 1, westImage: "testimage5.png", northImage: "testimage12.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 4, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage11.png", eastImage: "testimage.png"},
+                { x: 4, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage17.png"},
+                { x: 4, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimage.png"},
+                { x: 5, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 5, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 5, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 5, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
+                { x: 5, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
+                { x: 6, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimageborder1.png"},
+                { x: 6, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder2.png"},
+                { x: 6, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder1.png"},
+                { x: 6, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder2.png"},
+                { x: 6, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimageborder1.png"},
+
+                ];
+        
+            var direction = "east";
+            var x = 2, y = 3;
+
+            function getIndexFromPosition (x, y) {
+                for (var i = 0; i < rooms.length; i++) {
+                    if (x === rooms [i].x && y === rooms [i].y) {
+                        return i;
+                    }
+                }
+            }
+            function goLeft () {
+                if (direction === "east") {
+                    direction = "north";
+                } else if (direction === "north") {
+                    direction = "west";
+                } else if (direction === "west") {
+                    direction = "south";
+                } else if (direction === "south") {
+                    direction = "east";
+                }
+                updateImage ();
+            }
+            function goRight () {
+                if (direction === "west") {
+                    direction = "north";
+                } else if (direction === "north") {
+                    direction = "east";
+                } else if (direction === "east") {
+                    direction = "south";
+                } else if (direction === "south") {
+                    direction = "west";
+                }
+                updateImage ();
+            }
+
+            function goForward () {
+                if (direction === "west" && x > 0) {
+                    x--;
+                } else if (direction === "north" && y > 0) {
+                    y--;
+                } else if (direction === "east" && x < 6) {
+                    x++;
+                } else if (direction === "south" && y < 4) {
+                    y++;
+                }
+                console.log (x + "," + y);
+                updateImage ();
+            }
+            function updateImage () {
+                var roomIndex = getIndexFromPosition (x, y);
+                if (direction === "west") {
+                    document.getElementById ("screen-image").src = rooms [roomIndex].westImage;
+                } else if (direction === "north") {
+                    document.getElementById ("screen-image").src = rooms [roomIndex].northImage;
+                } else if (direction === "east") {
+                    document.getElementById ("screen-image").src = rooms [roomIndex].eastImage;
+                } else if (direction === "south") {
+                    document.getElementById ("screen-image").src = rooms [roomIndex].southImage;
+                }
+
+                compass.use ();
+
+            }
+
+            let Item = function (sName, sDescription, fUse) {
+                this.name = sName;
+                this.description = sDescription;
+                this.use = fUse;
+            }
+
+            let compass = new Item ("Compass", "An old compass.", () => { console.log (direction); });
+
+            compass.use ();
+
+        </script>
+    </body>
+</html>
