@@ -9,6 +9,8 @@
         <button id = "left" onclick = "goLeft ()">Left</button>
         <button id = "right" onclick = "goRight ()">Right</button>
         <button id = "forward" onclick = "goForward ()">Go forward</button>
+        <button id = "lantern" onclick = "lantern.use()">Lantern</button>
+        <button id = "compass" onclick = "compass.use()">Compass</button>
 
         <style>
             #screen {
@@ -48,47 +50,22 @@
             }
         </style>
         <script>
-            var rooms = [
-                { x: 0, y: 0, westImage: "testimageborder1.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 0, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 0, y: 2, westImage: "testimageborder1.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 0, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 0, y: 4, westImage: "testimageborder1.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 1, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 1, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 1, y: 2, westImage: "testimage5.png", northImage: "testimage15.png", southImage: "testimage2.png", eastImage: "testimage14.png"},
-                { x: 1, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 1, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
-                { x: 2, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 2, y: 1, westImage: "testimage5.png", northImage: "testimage7.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 2, y: 2, westImage: "testimage9.png", northImage: "testimage6.png", southImage: "testimage8.png", eastImage: "testimage.png"},
-                { x: 2, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 2, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimage.png"},
-                { x: 3, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 3, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage10.png"},
-                { x: 3, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 3, y: 3, westImage: "testimage13.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage16.png"},
-                { x: 3, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
-                { x: 4, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 4, y: 1, westImage: "testimage5.png", northImage: "testimage12.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 4, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage11.png", eastImage: "testimage.png"},
-                { x: 4, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage17.png"},
-                { x: 4, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimage.png"},
-                { x: 5, y: 0, westImage: "testimage5.png", northImage: "testimageborder1.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 5, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 5, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 5, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimage.png"},
-                { x: 5, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder1.png", eastImage: "testimage.png"},
-                { x: 6, y: 0, westImage: "testimage5.png", northImage: "testimageborder2.png", southImage: "testimage2.png", eastImage: "testimageborder1.png"},
-                { x: 6, y: 1, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder2.png"},
-                { x: 6, y: 2, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder1.png"},
-                { x: 6, y: 3, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimage2.png", eastImage: "testimageborder2.png"},
-                { x: 6, y: 4, westImage: "testimage5.png", northImage: "testimage3.png", southImage: "testimageborder2.png", eastImage: "testimageborder1.png"},
+            var rooms = [];
+            var torches = [{x: 3, y: 3, isLit: false}]
 
-                ];
+            function generateTestMap () {
+                for (let i = 0; i < 64; i++) {
+                    rooms.push ({ x: i % 8, y: Math.round(i / 8), image: "testimage5.png"});
+                }
+            }
         
+            generateTestMap ();
+
             var direction = "east";
             var x = 2, y = 3;
+            let totalTorchesLit = 0;
+            let lanternLight = 11; // -- amount of tiles the player can walk until lantern runs out
+            let maxLanternLight = 11;
 
             function getIndexFromPosition (x, y) {
                 for (var i = 0; i < rooms.length; i++) {
@@ -97,6 +74,16 @@
                     }
                 }
             }
+
+            function getTorchIndexFromPosition (x, y) {
+                let NONE_FOUND = -1;
+                for (let i = 0; i < torches.length; i++) {
+                    if (x === torches [i].x && y === torches [i].y) { return i; }
+                }
+
+                return NONE_FOUND;
+            }
+
             function goLeft () {
                 if (direction === "east") {
                     direction = "north";
@@ -127,28 +114,23 @@
                     x--;
                 } else if (direction === "north" && y > 0) {
                     y--;
-                } else if (direction === "east" && x < 6) {
+                } else if (direction === "east" && x < 7) {
                     x++;
-                } else if (direction === "south" && y < 4) {
+                } else if (direction === "south" && y < 7) {
                     y++;
                 }
-                console.log (x + "," + y);
+                console.log (x + "," + y + " " + lanternLight);
                 updateImage ();
+                if (lanternLight > 0) { lanternLight--; }
             }
             function updateImage () {
                 var roomIndex = getIndexFromPosition (x, y);
-                if (direction === "west") {
-                    document.getElementById ("screen-image").src = rooms [roomIndex].westImage;
-                } else if (direction === "north") {
-                    document.getElementById ("screen-image").src = rooms [roomIndex].northImage;
-                } else if (direction === "east") {
-                    document.getElementById ("screen-image").src = rooms [roomIndex].eastImage;
-                } else if (direction === "south") {
-                    document.getElementById ("screen-image").src = rooms [roomIndex].southImage;
+
+                if (lanternLight > 0) { 
+                    document.getElementById ("screen-image").src = rooms [roomIndex].image; 
+                } else {
+                    document.getElementById ("screen-image").src = "complete-dark.png"; 
                 }
-
-                compass.use ();
-
             }
 
             let Item = function (sName, sDescription, fUse) {
@@ -158,8 +140,21 @@
             }
 
             let compass = new Item ("Compass", "An old compass.", () => { console.log (direction); });
+            let lantern = new Item ("Lantern", "Your trusty light.", () => {
+                let torchIndex = getTorchIndexFromPosition (x, y);
 
-            compass.use ();
+                if (torchIndex !== -1) {
+                    if (!torches [torchIndex].isLit && lanternLight > 0) {
+                        torches [torchIndex].isLit = true;
+                        totalTorchesLit++;
+                        console.log ("New torch found!! Total torches lit: " + totalTorchesLit);
+                    } else {
+                        lanternLight = maxLanternLight;
+                        console.log ("Relit lantern at torch!");
+                        updateImage ();
+                    }
+                }
+            });
 
         </script>
     </body>
