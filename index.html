@@ -2,13 +2,13 @@
 <html>
   <head>
     <div id="screen">
-      <img id="screen-image" src="plains_east.png" />
+      <img id="screen-image" src="images/plains_east.png" />
     </div>
   </head>
   <body>
-    <button id="left" onclick="goLeft ()">Left</button>
-    <button id="right" onclick="goRight ()">Right</button>
-    <button id="forward" onclick="goForward ()">Go forward</button>
+    <button id="left" onclick="player.goLeft ()">Left</button>
+    <button id="right" onclick="player.goRight ()">Right</button>
+    <button id="forward" onclick="player.goForward ()">Go forward</button>
     <button id="lantern" onclick="lantern.use()">Lantern</button>
     <button id="compass" onclick="compass.use()">Compass</button>
 
@@ -56,113 +56,10 @@
         font-size: 20px;
       }
     </style>
+    <script src="map.js"></script>
     <script>
       let MAP_SIZE = 13;
 
-      let plainTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = false;
-        this.westImage = "plains.png";
-        this.northImage = "plains.png";
-        this.southImage = "plains.png";
-        this.eastImage = "plains_east.png";
-      };
-      let forestTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = false;
-        this.westImage = "forest.png";
-        this.northImage = "forest.png";
-        this.southImage = "forest.png";
-        this.eastImage = "forest_east.png";
-      };
-      let cliffTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = true;
-        this.westImage = "cliff.png";
-        this.northImage = "cliff.png";
-        this.southImage = "cliff.png";
-        this.eastImage = "cliff.png";
-      };
-      let hillTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = false;
-        this.westImage = "hills.png";
-        this.northImage = "hills.png";
-        this.southImage = "hills.png";
-        this.eastImage = "hills_east.png";
-      };
-      let caveTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = false;
-        this.westImage = "cave_entrance.png";
-        this.northImage = "cave_entrance.png";
-        this.southImage = "cave_entrance.png";
-        this.eastImage = "cave_entrance.png";
-      };
-      let largeRiverTile = function (iX, iY) {
-        this.x = iX;
-        this.y = iY;
-        this.isCollidable = false;
-        this.westImage = "mid_river_stream.png";
-        this.northImage = "river_border.png";
-        this.southImage = "river_border.png";
-        this.eastImage = "mid_river_stream.png";
-      }
-
-      let bridgeTile = {
-        x: 3, 
-        y: 4, 
-        isCollidable: false, 
-        westImage: "mid_river_bridge.png", 
-        northImage: "river_border.png", 
-        southImage: "river_border.png", 
-        eastImage: "mid_river_bridge.png"
-      }
-
-      var rooms = [
-      new cliffTile (1, 0), new forestTile (2, 0), new plainTile (3, 0), new cliffTile (4, 0), new cliffTile (7, 0), 
-          new cliffTile (8, 0), new plainTile (9, 0), new cliffTile (10, 0),
-      new cliffTile (0, 1), new forestTile (1, 1), new forestTile (2, 1), new forestTile (3, 1), new cliffTile (4, 1), 
-          new cliffTile (5, 1), new cliffTile (6, 1), new plainTile (7, 1), new plainTile (8, 1), 
-          new plainTile (9, 1), new cliffTile (10, 1), new cliffTile (11, 1),
-      new plainTile (0, 2), new forestTile (1, 2), new forestTile (2, 2), new plainTile (3, 2), new plainTile (4, 2), 
-          new forestTile (5, 2), new forestTile (6, 2), new plainTile (7, 2), new plainTile (8, 2), 
-          new forestTile (9, 2), new forestTile (10, 2), new plainTile (11, 2), new cliffTile (12, 2),
-      new hillTile (0, 3), new plainTile (1, 3), new plainTile (2, 3), new plainTile (3, 3), new plainTile (4, 3), 
-          new plainTile (5, 3), new plainTile (6, 3), new plainTile (7, 3), new hillTile (8, 3), 
-          new plainTile (9, 3), new plainTile (10, 3), new cliffTile (11, 3),
-      new cliffTile (0, 4), new largeRiverTile (1, 4), new largeRiverTile (2, 4), bridgeTile, new largeRiverTile (4, 4), 
-          new largeRiverTile (5, 4), new largeRiverTile (6, 4), new largeRiverTile (7, 4), new largeRiverTile (8, 4), 
-          new largeRiverTile (9, 4), new cliffTile (10, 4), new cliffTile (11, 4),
-      new cliffTile (0, 5), new plainTile (1, 5), new forestTile (2, 5), new forestTile (3, 5), new forestTile (4, 5), 
-          new forestTile (5, 5), new plainTile (6, 5), new plainTile (7, 5), new plainTile (8, 5), 
-          new plainTile (9, 5), new plainTile (10, 5), new plainTile (11, 5), new cliffTile (12, 5),
-      new forestTile (0, 6), new forestTile (1, 6), new forestTile (2, 6), new forestTile (3, 6), new plainTile (4, 6), 
-          new plainTile (5, 6), new plainTile (6, 6), new forestTile (7, 6), new forestTile (8, 6), 
-          new plainTile (9, 6), new plainTile (10, 6), new plainTile (11, 6), new hillTile (12, 6),
-      new plainTile (0, 7), new plainTile (1, 7), new forestTile (2, 7), new plainTile (3, 7), new plainTile (4, 7), 
-          new plainTile (5, 7), new plainTile (6, 7), new plainTile (7, 7), new forestTile (8, 7), 
-          new plainTile (9, 7), new hillTile (10, 7), new plainTile (11, 7), new hillTile (12, 7),
-        new cliffTile (1, 8), new forestTile (2, 8), new plainTile (3, 8), new forestTile (4, 8), 
-          new forestTile (5, 8), new forestTile (6, 8), new plainTile (7, 8), new plainTile (8, 8), 
-          new plainTile (9, 8), new plainTile (10, 8), new hillTile (11, 8), new cliffTile (12, 8),
-        new cliffTile (0, 9), new forestTile (1, 9), new forestTile (2, 9), new forestTile (3, 9), new forestTile (4, 9), 
-          new forestTile (5, 9), new forestTile (6, 9), new plainTile (7, 9), new plainTile (8, 9), 
-          new plainTile (9, 9), new hillTile (10, 9), new hillTile (11, 9), new cliffTile (12, 9),
-        new cliffTile (0, 10), new caveTile (1, 10), new plainTile (2, 10), new forestTile (3, 10), new forestTile (4, 10), 
-          new forestTile (5, 10), new forestTile (6, 10), new forestTile (7, 10), new forestTile (8, 10), 
-          new plainTile (9, 10), new plainTile (10, 10), new hillTile (11, 10), new cliffTile (12, 10),
-        new cliffTile (1, 11), new cliffTile (2, 11), new plainTile (3, 11), new plainTile (4, 11),
-          new plainTile (5, 11), new plainTile (6, 11), new forestTile (7, 11), new forestTile (8, 11),
-          new forestTile (9, 11), new plainTile (10, 11), new cliffTile (11, 11),
-        new cliffTile (3, 12), new plainTile (4, 12), new caveTile (5, 12), new plainTile (6, 12),
-          new forestTile (7, 12), new cliffTile (8, 12), new cliffTile (9, 12), new cliffTile (10, 12),
-      ];
       var torches = [
         { x: 9, y: 9, isLit: false },
         { x: 10, y: 6, isLit: false },
@@ -178,16 +75,113 @@
         { x: 7, y: 1, isLit: false },
       ];
 
-      var direction = "east";
-      var x = 7,
-        y = 9;
-      let totalTorchesLit = 0;
-      let lanternLight = 18; // -- amount of tiles the player can walk until lantern runs out
-      let maxLanternLight = 18;
+      let player = {
+        direction: "east",
+        x: 7,
+        y: 9,
+        totalTorchesLit: 0,
+        lanternLight: 18,
+        maxLanternLight: 18,
+        goLeft: function () {
+          if (player.direction === "east") {
+            player.direction = "north";
+          } else if (player.direction === "north") {
+            player.direction = "west";
+          } else if (player.direction === "west") {
+            player.direction = "south";
+          } else if (player.direction === "south") {
+            player.direction = "east";
+          }
+          document.getElementById("description-text").innerHTML =
+            "You turn left.";
+          updateImage();
+        },
+        goRight: function () {
+          if (player.direction === "west") {
+            player.direction = "north";
+          } else if (player.direction === "north") {
+            player.direction = "east";
+          } else if (player.direction === "east") {
+            player.direction = "south";
+          } else if (player.direction === "south") {
+            player.direction = "west";
+          }
+          document.getElementById("description-text").innerHTML =
+            "You turn right.";
+          updateImage();
+        },
+        goForward: function () {
+          if (player.direction === "west" && player.x > 0) {
+            if (
+              !overworldMap[getIndexFromPosition(player.x - 1, player.y)]
+                .isCollidable
+            ) {
+              player.x--;
+              document.getElementById("description-text").innerHTML =
+                "You move forward.";
+            } else {
+              document.getElementById("description-text").innerHTML =
+                "You can't move here.";
+            }
+          } else if (player.direction === "north" && player.y > 0) {
+            if (
+              !overworldMap[getIndexFromPosition(player.x, player.y - 1)]
+                .isCollidable
+            ) {
+              player.y--;
+              document.getElementById("description-text").innerHTML =
+                "You move forward.";
+            } else {
+              document.getElementById("description-text").innerHTML =
+                "You can't move here.";
+            }
+          } else if (player.direction === "east" && player.x < MAP_SIZE - 1) {
+            if (
+              !overworldMap[getIndexFromPosition(player.x + 1, player.y)]
+                .isCollidable
+            ) {
+              player.x++;
+              document.getElementById("description-text").innerHTML =
+                "You move forward.";
+            } else {
+              document.getElementById("description-text").innerHTML =
+                "You can't move here.";
+            }
+          } else if (player.direction === "south" && player.y < MAP_SIZE - 1) {
+            if (
+              !overworldMap[getIndexFromPosition(player.x, player.y + 1)]
+                .isCollidable
+            ) {
+              player.y++;
+              document.getElementById("description-text").innerHTML =
+                "You move forward.";
+            } else {
+              document.getElementById("description-text").innerHTML =
+                "You can't move here.";
+            }
+          }
+          console.log(player.x + "," + player.y + " " + player.lanternLight);
+          updateImage();
+
+          let torchIndex = getTorchIndexFromPosition(player.x, player.y);
+          if (torchIndex !== -1) {
+            if (torches[torchIndex].isLit) {
+              document.getElementById("description-text").innerHTML =
+                "There is an lit torch here. You can relight your lantern.";
+            } else {
+              document.getElementById("description-text").innerHTML =
+                "There is an unlit torch here. Use your lantern to light it!";
+            }
+          }
+          if (player.lanternLight > 0) {
+            player.lanternLight--;
+          }
+        },
+      };
 
       function getIndexFromPosition(x, y) {
-        for (var i = 0; i < rooms.length; i++) {
-          if (x === rooms[i].x && y === rooms[i].y) {
+        for (var i = 0; i < overworldMap.length; i++) {
+          if (x === overworldMap[i].x && y === overworldMap[i].y) {
             return i;
           }
         }
@@ -204,133 +198,44 @@
         return NONE_FOUND;
       }
 
-      function goLeft() {
-        if (direction === "east") {
-          direction = "north";
-        } else if (direction === "north") {
-          direction = "west";
-        } else if (direction === "west") {
-          direction = "south";
-        } else if (direction === "south") {
-          direction = "east";
-        }
-        document.getElementById("description-text").innerHTML =
-              "You turn left.";
-        updateImage();
-      }
-      function goRight() {
-        if (direction === "west") {
-          direction = "north";
-        } else if (direction === "north") {
-          direction = "east";
-        } else if (direction === "east") {
-          direction = "south";
-        } else if (direction === "south") {
-          direction = "west";
-        }
-        document.getElementById("description-text").innerHTML =
-              "You turn right.";
-        updateImage();
-      }
-
-      function goForward() {
-        if (direction === "west" && x > 0) {
-          if (!rooms [getIndexFromPosition (x - 1, y)].isCollidable) {
-            x--;
-            document.getElementById("description-text").innerHTML =
-              "You move forward.";
-          } else {
-            document.getElementById("description-text").innerHTML =
-              "You can't move here.";
-          }
-        } else if (direction === "north" && y > 0) {
-          if (!rooms [getIndexFromPosition (x, y - 1)].isCollidable) {
-            y--;
-            document.getElementById("description-text").innerHTML =
-              "You move forward.";
-          } else {
-            document.getElementById("description-text").innerHTML =
-              "You can't move here.";
-          }
-        } else if (direction === "east" && x < MAP_SIZE - 1) {
-          if (!rooms [getIndexFromPosition (x + 1, y)].isCollidable) {
-            x++;
-            document.getElementById("description-text").innerHTML =
-              "You move forward.";
-          } else {
-            document.getElementById("description-text").innerHTML =
-              "You can't move here.";
-          }
-        } else if (direction === "south" && y < MAP_SIZE - 1) {
-          if (!rooms [getIndexFromPosition (x, y + 1)].isCollidable) {
-            y++;
-            document.getElementById("description-text").innerHTML =
-              "You move forward.";
-          } else {
-            document.getElementById("description-text").innerHTML =
-              "You can't move here.";
-          }
-        }
-        console.log(x + "," + y + " " + lanternLight);
-        updateImage();
-
-        let torchIndex = getTorchIndexFromPosition(x, y);
-        if (torchIndex !== -1) {
-          if (torches[torchIndex].isLit) {
-            document.getElementById("description-text").innerHTML =
-              "There is an lit torch here. You can relight your lantern.";
-          } else {
-            document.getElementById("description-text").innerHTML =
-              "There is an unlit torch here. Use your lantern to light it!";
-          }
-        }
-        if (lanternLight > 0) {
-          lanternLight--;
-        }
-      }
       function updateImage() {
         let roomIndex = 0;
-        if (lanternLight > 0) {
-          if (direction === "west") {
-            if (x === 0) {
-              document.getElementById("screen-image").src =
-              "cliff.png";
+        if (player.lanternLight > 0) {
+          if (player.direction === "west") {
+            if (player.x === 0) {
+              document.getElementById("screen-image").src = "cliff.png";
             } else {
-              roomIndex = getIndexFromPosition (x - 1, y);
+              roomIndex = getIndexFromPosition(player.x - 1, player.y);
               document.getElementById("screen-image").src =
-              rooms[roomIndex].westImage;
+                overworldMap[roomIndex].westImage;
             }
-          } else if (direction === "north") {
-            if (y === 0) {
-              document.getElementById("screen-image").src =
-              "cliff.png";
+          } else if (player.direction === "north") {
+            if (player.y === 0) {
+              document.getElementById("screen-image").src = "cliff.png";
             } else {
-              roomIndex = getIndexFromPosition (x, y - 1);
+              roomIndex = getIndexFromPosition(player.x, player.y - 1);
               document.getElementById("screen-image").src =
-              rooms[roomIndex].northImage;
+                overworldMap[roomIndex].northImage;
             }
-
-          } else if (direction === "east") {
-            if (x === MAP_SIZE - 1) {
-              document.getElementById("screen-image").src =
-              "cliff.png";
+          } else if (player.direction === "east") {
+            if (player.x === MAP_SIZE - 1) {
+              document.getElementById("screen-image").src = "cliff.png";
             } else {
-              roomIndex = getIndexFromPosition (x + 1, y);
+              roomIndex = getIndexFromPosition(player.x + 1, player.y);
               document.getElementById("screen-image").src =
-              rooms[roomIndex].eastImage;
+                overworldMap[roomIndex].eastImage;
             }
-          } else if (direction === "south") {
-            if (y === MAP_SIZE - 1) {
-              document.getElementById("screen-image").src =
-              "cliff.png";
+          } else if (player.direction === "south") {
+            if (player.y === MAP_SIZE - 1) {
+              document.getElementById("screen-image").src = "cliff.png";
             } else {
-              roomIndex = getIndexFromPosition (x, y + 1);
+              roomIndex = getIndexFromPosition(player.x, player.y + 1);
               document.getElementById("screen-image").src =
-              rooms[roomIndex].southImage;
+                overworldMap[roomIndex].southImage;
             }
           }
         } else {
-          document.getElementById("screen-image").src = "complete-dark.png";
+          document.getElementById("screen-image").src = "images/complete-dark.png";
           document.getElementById("description-text").innerHTML =
             "Your lantern has run out of light. Find a torch to relight it!";
         }
@@ -344,26 +249,26 @@
 
       let compass = new Item("Compass", "An old compass.", () => {
         document.getElementById("description-text").innerHTML =
-          "Your compass reads: " + direction;
+          "Your compass reads: " + player.direction;
       });
       let lantern = new Item("Lantern", "Your trusty light.", () => {
-        let torchIndex = getTorchIndexFromPosition(x, y);
+        let torchIndex = getTorchIndexFromPosition(player.x, player.y);
 
         if (torchIndex !== -1) {
-          if (!torches[torchIndex].isLit && lanternLight > 0) {
+          if (!torches[torchIndex].isLit && player.lanternLight > 0) {
             torches[torchIndex].isLit = true;
-            totalTorchesLit++;
+            player.totalTorchesLit++;
             document.getElementById("description-text").innerHTML =
-              "New torch found!! Total torches lit: " + totalTorchesLit;
+              "New torch found!! Total torches lit: " + player.totalTorchesLit;
           } else {
-            lanternLight = maxLanternLight;
+            player.lanternLight = player.maxLanternLight;
             document.getElementById("description-text").innerHTML =
               "Relit lantern at torch!";
             updateImage();
           }
         } else {
           document.getElementById("description-text").innerHTML =
-            "You check the lantern. Light left: " + lanternLight;
+            "You check the lantern. Light left: " + player.lanternLight;
         }
       });
     </script>
