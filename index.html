@@ -182,8 +182,8 @@
       var x = 7,
         y = 9;
       let totalTorchesLit = 0;
-      let lanternLight = 16; // -- amount of tiles the player can walk until lantern runs out
-      let maxLanternLight = 16;
+      let lanternLight = 18; // -- amount of tiles the player can walk until lantern runs out
+      let maxLanternLight = 18;
 
       function getIndexFromPosition(x, y) {
         for (var i = 0; i < rooms.length; i++) {
@@ -214,6 +214,8 @@
         } else if (direction === "south") {
           direction = "east";
         }
+        document.getElementById("description-text").innerHTML =
+              "You turn left.";
         updateImage();
       }
       function goRight() {
@@ -226,6 +228,8 @@
         } else if (direction === "south") {
           direction = "west";
         }
+        document.getElementById("description-text").innerHTML =
+              "You turn right.";
         updateImage();
       }
 
@@ -233,6 +237,8 @@
         if (direction === "west" && x > 0) {
           if (!rooms [getIndexFromPosition (x - 1, y)].isCollidable) {
             x--;
+            document.getElementById("description-text").innerHTML =
+              "You move forward.";
           } else {
             document.getElementById("description-text").innerHTML =
               "You can't move here.";
@@ -240,6 +246,8 @@
         } else if (direction === "north" && y > 0) {
           if (!rooms [getIndexFromPosition (x, y - 1)].isCollidable) {
             y--;
+            document.getElementById("description-text").innerHTML =
+              "You move forward.";
           } else {
             document.getElementById("description-text").innerHTML =
               "You can't move here.";
@@ -247,6 +255,8 @@
         } else if (direction === "east" && x < MAP_SIZE - 1) {
           if (!rooms [getIndexFromPosition (x + 1, y)].isCollidable) {
             x++;
+            document.getElementById("description-text").innerHTML =
+              "You move forward.";
           } else {
             document.getElementById("description-text").innerHTML =
               "You can't move here.";
@@ -254,6 +264,8 @@
         } else if (direction === "south" && y < MAP_SIZE - 1) {
           if (!rooms [getIndexFromPosition (x, y + 1)].isCollidable) {
             y++;
+            document.getElementById("description-text").innerHTML =
+              "You move forward.";
           } else {
             document.getElementById("description-text").innerHTML =
               "You can't move here.";
