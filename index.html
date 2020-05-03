@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Exploration Game</title>
     <div id="screen">
       <img id="screen-image" src="images/plains_east.png" />
     </div>
@@ -11,6 +12,7 @@
     <button id="forward" onclick="player.goForward ()">Go forward</button>
     <button id="lantern" onclick="lantern.use()">Lantern</button>
     <button id="compass" onclick="compass.use()">Compass</button>
+    <button id="shovel" onclick="shovel.use()">Shovel</button>
 
     <p id="description-text"></p>
 
@@ -49,6 +51,9 @@
         position: absolute;
         top: 85%;
       }
+      #shovel {
+        visibility: hidden;
+      }
       body {
         font-family: arial;
         background-color: black;
@@ -73,6 +78,22 @@
         { x: 4, y: 3, isLit: false },
         { x: 0, y: 6, isLit: false },
         { x: 7, y: 1, isLit: false },
+        { x: 6, y: 8, isLit: false },
+        { x: 7, y: 5, isLit: false },
+        { x: 2, y: 5, isLit: false },
+      ];
+
+      var shovelSpots = [
+        { x: 1, y: 1, artifact: "Ruby Necklace"},
+        { x: 9, y: 1, artifact: "Tennis Ball"},
+        { x: 7, y: 3, artifact: "Vinyl Record"},
+        { x: 1, y: 5, artifact: "Harmonica"},
+        { x: 4, y: 6, artifact: "Old Pocketwatch"},
+        { x: 8, y: 6, artifact: "Wooden Flute"},
+        { x: 7, y: 8, artifact: "Arrowhead"},
+        { x: 11, y: 8, artifact: "The General Theory of Employment, Interest, and Money by John Maynard Keynes"},
+        { x: 4, y: 9, artifact: "Smiling Rock"},
+        { x: 8, y: 11, artifact: "Jade Necklace"},
       ];
 
       let player = {
@@ -82,6 +103,8 @@
         totalTorchesLit: 0,
         lanternLight: 18,
         maxLanternLight: 18,
+        artifacts: [],
+        hasShovel: false,
         goLeft: function () {
           if (player.direction === "east") {
             player.direction = "north";
@@ -176,6 +199,13 @@
           if (player.lanternLight > 0) {
             player.lanternLight--;
           }
+
+          if (player.x === 3 && player.y === 11 && !player.hasShovel) {
+            document.getElementById("description-text").innerHTML =
+                "You found a shovel!";
+            player.hasShovel = true;
+            document.getElementById('shovel').style.visibility = 'visible';
+          }
         },
       };
 
@@ -198,12 +228,23 @@
         return NONE_FOUND;
       }
 
+      function getShovelSpotIndexFromPosition(x, y) {
+        let NONE_FOUND = -1;
+        for (let i = 0; i < shovelSpots.length; i++) {
+          if (x === shovelSpots[i].x && y === shovelSpots[i].y) {
+            return i;
+          }
+        }
+
+        return NONE_FOUND;
+      }
+
       function updateImage() {
         let roomIndex = 0;
         if (player.lanternLight > 0) {
           if (player.direction === "west") {
             if (player.x === 0) {
-              document.getElementById("screen-image").src = "cliff.png";
+              document.getElementById("screen-image").src = "images/cliff.png";
             } else {
               roomIndex = getIndexFromPosition(player.x - 1, player.y);
               document.getElementById("screen-image").src =
@@ -211,7 +252,7 @@
             }
           } else if (player.direction === "north") {
             if (player.y === 0) {
-              document.getElementById("screen-image").src = "cliff.png";
+              document.getElementById("screen-image").src = "images/cliff.png";
             } else {
               roomIndex = getIndexFromPosition(player.x, player.y - 1);
               document.getElementById("screen-image").src =
@@ -219,7 +260,7 @@
             }
           } else if (player.direction === "east") {
             if (player.x === MAP_SIZE - 1) {
-              document.getElementById("screen-image").src = "cliff.png";
+              document.getElementById("screen-image").src = "images/cliff.png";
             } else {
               roomIndex = getIndexFromPosition(player.x + 1, player.y);
               document.getElementById("screen-image").src =
@@ -227,7 +268,7 @@
             }
           } else if (player.direction === "south") {
             if (player.y === MAP_SIZE - 1) {
-              document.getElementById("screen-image").src = "cliff.png";
+              document.getElementById("screen-image").src = "images/cliff.png";
             } else {
               roomIndex = getIndexFromPosition(player.x, player.y + 1);
               document.getElementById("screen-image").src =
@@ -269,6 +310,19 @@
         } else {
           document.getElementById("description-text").innerHTML =
             "You check the lantern. Light left: " + player.lanternLight;
+        }
+      });
+      let shovel = new Item("Shovel", "A worn shovel.", () => {
+        let spotIndex = getShovelSpotIndexFromPosition(player.x, player.y);
+
+        if (spotIndex !== -1) {
+          document.getElementById("description-text").innerHTML =
+            "You dig and find " + shovelSpots[spotIndex].artifact + "!";
+          player.artifacts.push(shovelSpots[spotIndex].artifact);
+          shovelSpots.splice(spotIndex, 1);
+        } else {
+          document.getElementById("description-text").innerHTML =
+            "You dig a hole with the shovel, but you can't seem to find anything.";
         }
       });
     </script>
