@@ -5,7 +5,7 @@ This project is an attempt to create an exploration-based game with an interface
 ![image](https://user-images.githubusercontent.com/8081069/80868654-0e25c600-8c6a-11ea-9892-01619eb9c2b2.png)
 
 <h2>How to play</h2>
-The goal of the game is to light all of the torches in the map (there are currently 15). Players navigate around the map with the buttons at the bottom of the screen, using the lantern and the compass.
+The goal of the game is to light all of the torches in the map (there are currently 41). Players navigate around the map with the buttons at the bottom of the screen, using the lantern and the compass.
 
 
 - Once players find a torch, they can use the lantern by clicking on the 'Lantern' button to light the torch. Once a torch is lit, the player can use the lantern again on a tile with a torch to relight the lantern.
