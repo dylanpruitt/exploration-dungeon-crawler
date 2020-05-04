@@ -14,6 +14,9 @@
     <button id="compass" onclick="compass.use()">Compass</button>
     <button id="shovel" onclick="shovel.use()">Shovel</button>
     <button id="geolocator" onclick="geolocator.use()">Geolocator</button>
+    <button id="save-game" onclick="saveGame()">Save Game</button>
+
+    <a id="instructions" href="instructions.html" target="_blank">How to play</a>
 
     <p id="description-text"></p>
 
@@ -55,6 +58,10 @@
       #shovel {
         visibility: hidden;
       }
+      #instructions {
+        position: absolute;
+        right: 5%;
+      }
       body {
         font-family: arial;
         background-color: black;
@@ -85,16 +92,21 @@
       ];
 
       var shovelSpots = [
-        { x: 1, y: 1, artifact: "Ruby Necklace"},
-        { x: 9, y: 1, artifact: "Tennis Ball"},
-        { x: 7, y: 3, artifact: "Vinyl Record"},
-        { x: 1, y: 5, artifact: "Harmonica"},
-        { x: 4, y: 6, artifact: "Old Pocketwatch"},
-        { x: 8, y: 6, artifact: "Wooden Flute"},
-        { x: 7, y: 8, artifact: "Arrowhead"},
-        { x: 11, y: 8, artifact: "The General Theory of Employment, Interest, and Money by John Maynard Keynes"},
-        { x: 4, y: 9, artifact: "Smiling Rock"},
-        { x: 8, y: 11, artifact: "Jade Necklace"},
+        { x: 1, y: 1, artifact: "Ruby Necklace" },
+        { x: 9, y: 1, artifact: "Tennis Ball" },
+        { x: 7, y: 3, artifact: "Vinyl Record" },
+        { x: 1, y: 5, artifact: "Harmonica" },
+        { x: 4, y: 6, artifact: "Old Pocketwatch" },
+        { x: 8, y: 6, artifact: "Wooden Flute" },
+        { x: 7, y: 8, artifact: "Arrowhead" },
+        {
+          x: 11,
+          y: 8,
+          artifact:
+            "The General Theory of Employment, Interest, and Money by John Maynard Keynes",
+        },
+        { x: 4, y: 9, artifact: "Smiling Rock" },
+        { x: 8, y: 11, artifact: "Jade Necklace" },
       ];
 
       let player = {
@@ -203,12 +215,31 @@
 
           if (player.x === 3 && player.y === 11 && !player.hasShovel) {
             document.getElementById("description-text").innerHTML =
-                "You found a shovel!";
+              "You found a shovel!";
             player.hasShovel = true;
-            document.getElementById('shovel').style.visibility = 'visible';
+            document.getElementById("shovel").style.visibility = "visible";
           }
         },
       };
+
+      let retrievedData = localStorage.getItem("gamedata");
+      if (retrievedData !== null) {
+        let gameData = JSON.parse(retrievedData);
+        shovelSpots = gameData.shovelSpots;
+        torches = gameData.torches;
+        player.x = gameData.player.x;
+        player.y = gameData.player.y;
+        player.direction = gameData.player.direction;
+        player.totalTorchesLit = gameData.player.totalTorchesLit;
+        player.lanternLight = gameData.player.lanternLight;
+        player.maxLanternLight = gameData.player.maxLanternLight;
+        player.artifacts = gameData.player.artifacts;
+        player.hasShovel = gameData.player.hasShovel;
+
+        if (player.hasShovel) {
+          document.getElementById("shovel").style.visibility = "visible";
+        }
+      }
 
       function getIndexFromPosition(x, y) {
         for (var i = 0; i < overworldMap.length; i++) {
@@ -277,10 +308,21 @@
             }
           }
         } else {
-          document.getElementById("screen-image").src = "images/complete-dark.png";
+          document.getElementById("screen-image").src =
+            "images/complete-dark.png";
           document.getElementById("description-text").innerHTML =
             "Your lantern has run out of light. Find a torch to relight it!";
         }
+      }
+
+      function saveGame() {
+        let gameData = {
+          player: player,
+          torches: torches,
+          shovelSpots: shovelSpots,
+        };
+        localStorage.setItem("gamedata", JSON.stringify(gameData));
+        document.getElementById("description-text").innerHTML = "Saved game!";
       }
 
       let Item = function (sName, sDescription, fUse) {
@@ -302,7 +344,7 @@
             player.totalTorchesLit++;
             document.getElementById("description-text").innerHTML =
               "New torch found!! Total torches lit: " + player.totalTorchesLit;
-          } else {
+          } else if (torches[torchIndex].isLit) {
             player.lanternLight = player.maxLanternLight;
             document.getElementById("description-text").innerHTML =
               "Relit lantern at torch!";
@@ -326,10 +368,14 @@
             "You dig a hole with the shovel, but you can't seem to find anything.";
         }
       });
-      let geolocator = new Item("Geolocator", "It helps you see your position on the map.", () => {
-        document.getElementById("description-text").innerHTML =
+      let geolocator = new Item(
+        "Geolocator",
+        "It helps you see your position on the map.",
+        () => {
+          document.getElementById("description-text").innerHTML =
             "Your position: (" + player.x + ", " + player.y + ")";
-      });
+        }
+      );
     </script>
   </body>
 </html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exploration Game - Instructions</title>
+    <h1>How to play</h1>
+  </head>
+  <body>
+    <p id="description">
+      The goal of the game is to light all of the torches in the map (there are
+      currently 15). Players navigate around the map with the buttons at the
+      bottom of the screen, with the help of various items.
+    </p>
+    <ul id="instructions">
+      <li>
+        Once players find a torch, they can use the lantern by clicking on the
+        'Lantern' button to light the torch. Once a torch is lit, the player can
+        use the lantern again on a tile with a torch to relight the lantern.
+      </li>
+      <li>
+        Anywhere else, the player can use the lantern to check how much light is
+        left in the lantern (in other words, how many times the player can move
+        - not including turns - before the lantern runs out.)
+      </li>
+      <li>
+        If the lantern runs out of light, the player will be unable to see
+        anything and can only see again if they can find a lit torch to light
+        their lantern.
+        <em>You cannot light your lantern again at an unlit torch.</em>
+      </li>
+    </ul>
+    <style>
+      #description {
+        width: 60%;
+      }
+      #instructions {
+        width: 60%;
+      }
+      body {
+        font-family: arial;
+        background-color: black;
+        color: white;
+        font-size: 20px;
+      }
+    </style>
+  </body>
+</html>
