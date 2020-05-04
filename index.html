@@ -13,7 +13,9 @@
     <button id="lantern" onclick="lantern.use()">Lantern</button>
     <button id="compass" onclick="compass.use()">Compass</button>
     <button id="shovel" onclick="shovel.use()">Shovel</button>
+    <button id="key" onclick="key.use()">Key</button>
     <button id="geolocator" onclick="geolocator.use()">Geolocator</button>
+    <button id="artifact" onclick="viewArtifacts()">View Artifacts</button>
     <button id="save-game" onclick="saveGame()">Save Game</button>
 
     <a id="instructions" href="instructions.html" target="_blank">How to play</a>
@@ -58,6 +60,9 @@
       #shovel {
         visibility: hidden;
       }
+      #key {
+        visibility: hidden;
+      }
       #instructions {
         position: absolute;
         right: 5%;
@@ -97,7 +102,7 @@
         { x: 7, y: 3, artifact: "Vinyl Record" },
         { x: 1, y: 5, artifact: "Harmonica" },
         { x: 4, y: 6, artifact: "Old Pocketwatch" },
-        { x: 8, y: 6, artifact: "Wooden Flute" },
+        { x: 9, y: 6, artifact: "Wooden Flute" },
         { x: 7, y: 8, artifact: "Arrowhead" },
         {
           x: 11,
@@ -109,6 +114,14 @@
         { x: 8, y: 11, artifact: "Jade Necklace" },
       ];
 
+      var treasureChests = [
+          { x: 5, y: 2, artifact: "Old Soda Bottle" },
+          { x: 11, y: 5, artifact: "Unsettling Garden Gnome" },
+          { x: 3, y: 7, artifact: "Propeller Hat" },
+          { x: 9, y: 8, artifact: "Survival Magazine" },
+          { x: 10, y: 11, artifact: "Benevolent Garden Gnome" },
+      ];
+
       let player = {
         direction: "east",
         x: 7,
@@ -118,6 +131,7 @@
         maxLanternLight: 18,
         artifacts: [],
         hasShovel: false,
+        hasKey: false,
         goLeft: function () {
           if (player.direction === "east") {
             player.direction = "north";
@@ -209,6 +223,12 @@
                 "There is an unlit torch here. Use your lantern to light it!";
             }
           }
+
+          let chestIndex = getTreasureChestIndexFromPosition(player.x, player.y);
+          if (chestIndex !== -1) {
+              document.getElementById("description-text").innerHTML =
+                "There is a treasure chest here. You can use a key to open it.";
+          }
           if (player.lanternLight > 0) {
             player.lanternLight--;
           }
@@ -218,6 +238,12 @@
               "You found a shovel!";
             player.hasShovel = true;
             document.getElementById("shovel").style.visibility = "visible";
+          }
+          if (player.x === 11 && player.y === 2 && !player.hasKey) {
+            document.getElementById("description-text").innerHTML =
+              "You found a key!";
+            player.hasKey = true;
+            document.getElementById("key").style.visibility = "visible";
           }
         },
       };
@@ -235,9 +261,13 @@
         player.maxLanternLight = gameData.player.maxLanternLight;
         player.artifacts = gameData.player.artifacts;
         player.hasShovel = gameData.player.hasShovel;
+        player.hasKey = gameData.player.hasKey;
 
         if (player.hasShovel) {
           document.getElementById("shovel").style.visibility = "visible";
+        }
+        if (player.hasKey) {
+          document.getElementById("key").style.visibility = "visible";
         }
       }
 
@@ -264,6 +294,17 @@
         let NONE_FOUND = -1;
         for (let i = 0; i < shovelSpots.length; i++) {
           if (x === shovelSpots[i].x && y === shovelSpots[i].y) {
+            return i;
+          }
+        }
+
+        return NONE_FOUND;
+      }
+
+      function getTreasureChestIndexFromPosition(x, y) {
+        let NONE_FOUND = -1;
+        for (let i = 0; i < treasureChests.length; i++) {
+          if (x === treasureChests[i].x && y === treasureChests[i].y) {
             return i;
           }
         }
@@ -315,11 +356,22 @@
         }
       }
 
+      function viewArtifacts() {
+        let artifactString = "Artifacts found:\n";
+        for (let i = 0; i < player.artifacts.length; i++) {
+          artifactString += player.artifacts[i];
+          if (i < player.artifacts.length - 1) {
+            artifactString += ", ";
+          }
+        }
+        alert(artifactString);
+      }
       function saveGame() {
         let gameData = {
           player: player,
           torches: torches,
           shovelSpots: shovelSpots,
+          treasureChests: treasureChests,
         };
         localStorage.setItem("gamedata", JSON.stringify(gameData));
         document.getElementById("description-text").innerHTML = "Saved game!";
@@ -376,6 +428,19 @@
             "Your position: (" + player.x + ", " + player.y + ")";
         }
       );
+      let key = new Item("Key", "A skeleton key.", () => {
+        let chestIndex = getTreasureChestIndexFromPosition(player.x, player.y);
+
+        if (chestIndex !== -1) {
+          document.getElementById("description-text").innerHTML =
+            "You use the key and find " + treasureChests[chestIndex].artifact + "!";
+          player.artifacts.push(treasureChests[chestIndex].artifact);
+          treasureChests.splice(chestIndex, 1);
+        } else {
+          document.getElementById("description-text").innerHTML =
+            "There's nothing to use the key on!";
+        }
+      });
     </script>
   </body>
 </html>
