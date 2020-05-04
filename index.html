@@ -5,7 +5,7 @@
     <div id="screen">
       <img id="screen-image" src="images/plains_east.png" />
     </div>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
     <button id="left" onclick="player.goLeft ()">Left</button>
@@ -27,14 +27,15 @@
 
     <script src="map.js"></script>
     <script src="items.js"></script>
-    <script src="player.js"></script>    
+    <script src="player.js"></script>
     <script>
       let retrievedData = localStorage.getItem("gamedata");
       if (retrievedData !== null) {
         let gameData = JSON.parse(retrievedData);
-        overworld = gameData.overworld;
+        world = gameData.world;
         player.x = gameData.player.x;
         player.y = gameData.player.y;
+        player.z = gameData.player.z;
         player.direction = gameData.player.direction;
         player.totalTorchesLit = gameData.player.totalTorchesLit;
         player.lanternLight = gameData.player.lanternLight;
@@ -58,33 +59,33 @@
             if (player.x === 0) {
               document.getElementById("screen-image").src = "images/cliff.png";
             } else {
-              roomIndex = getIndexFromPosition(player.x - 1, player.y);
+              roomIndex = getIndexFromPosition(player.x - 1, player.y, player.z);
               document.getElementById("screen-image").src =
-                overworld.map[roomIndex].westImage;
+                world.map[roomIndex].westImage;
             }
           } else if (player.direction === "north") {
             if (player.y === 0) {
               document.getElementById("screen-image").src = "images/cliff.png";
             } else {
-              roomIndex = getIndexFromPosition(player.x, player.y - 1);
+              roomIndex = getIndexFromPosition(player.x, player.y - 1, player.z);
               document.getElementById("screen-image").src =
-                overworld.map[roomIndex].northImage;
+                world.map[roomIndex].northImage;
             }
           } else if (player.direction === "east") {
             if (player.x === MAP_SIZE - 1) {
               document.getElementById("screen-image").src = "images/cliff.png";
             } else {
-              roomIndex = getIndexFromPosition(player.x + 1, player.y);
+              roomIndex = getIndexFromPosition(player.x + 1, player.y, player.z);
               document.getElementById("screen-image").src =
-                overworld.map[roomIndex].eastImage;
+                world.map[roomIndex].eastImage;
             }
           } else if (player.direction === "south") {
             if (player.y === MAP_SIZE - 1) {
               document.getElementById("screen-image").src = "images/cliff.png";
             } else {
-              roomIndex = getIndexFromPosition(player.x, player.y + 1);
+              roomIndex = getIndexFromPosition(player.x, player.y + 1, player.z);
               document.getElementById("screen-image").src =
-                overworld.map[roomIndex].southImage;
+                world.map[roomIndex].southImage;
             }
           }
         } else {
@@ -108,7 +109,7 @@
       function saveGame() {
         let gameData = {
           player: player,
-          overworld: overworld,
+          world: world,
         };
         localStorage.setItem("gamedata", JSON.stringify(gameData));
         document.getElementById("description-text").innerHTML = "Saved game!";
