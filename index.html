@@ -13,6 +13,7 @@
     <button id="lantern" onclick="lantern.use()">Lantern</button>
     <button id="compass" onclick="compass.use()">Compass</button>
     <button id="shovel" onclick="shovel.use()">Shovel</button>
+    <button id="geolocator" onclick="geolocator.use()">Geolocator</button>
 
     <p id="description-text"></p>
 
@@ -324,6 +325,10 @@
           document.getElementById("description-text").innerHTML =
             "You dig a hole with the shovel, but you can't seem to find anything.";
         }
+      });
+      let geolocator = new Item("Geolocator", "It helps you see your position on the map.", () => {
+        document.getElementById("description-text").innerHTML =
+            "Your position: (" + player.x + ", " + player.y + ")";
       });
     </script>
   </body>
