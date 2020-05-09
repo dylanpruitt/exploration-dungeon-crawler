@@ -29,6 +29,7 @@
     <script src="items.js"></script>
     <script src="player.js"></script>
     <script>
+      world.generateMap();
       let retrievedData = localStorage.getItem("gamedata");
       if (retrievedData !== null) {
         let gameData = JSON.parse(retrievedData);
