@@ -1,3 +1,5 @@
+let directions = ["north", "east", "south", "west"];
+
 let player = {
   direction: "east",
   x: 7,
@@ -9,77 +11,43 @@ let player = {
   artifacts: [],
   hasShovel: false,
   hasKey: false,
-  goLeft: function () {
-    if (player.direction === "east") {
-      player.direction = "north";
-    } else if (player.direction === "north") {
-      player.direction = "west";
-    } else if (player.direction === "west") {
-      player.direction = "south";
-    } else if (player.direction === "south") {
-      player.direction = "east";
+  directionIndex: function () {
+    let NOT_FOUND = -1;
+    for (let i = 0; i < directions.length; i++) {
+      if (player.direction === directions [i]) { return i; }
     }
+    return NOT_FOUND;
+  },
+  goLeft: function () {
+    let newDirectionIndex = player.directionIndex() - 1;
+    if (newDirectionIndex < 0) { newDirectionIndex = directions.length - 1; }
+    player.direction = directions [newDirectionIndex];
     document.getElementById("description-text").innerHTML = "You turn left.";
     updateImage();
   },
   goRight: function () {
-    if (player.direction === "west") {
-      player.direction = "north";
-    } else if (player.direction === "north") {
-      player.direction = "east";
-    } else if (player.direction === "east") {
-      player.direction = "south";
-    } else if (player.direction === "south") {
-      player.direction = "west";
-    }
+    let newDirectionIndex = player.directionIndex() + 1;
+    if (newDirectionIndex >= directions.length) { newDirectionIndex -= directions.length; }
+    player.direction = directions [newDirectionIndex];
     document.getElementById("description-text").innerHTML = "You turn right.";
     updateImage();
   },
   goForward: function () {
-    if (player.direction === "west" && player.x > 0) {
-      if (
-        !world.map[getIndexFromPosition(player.x - 1, player.y, player.z)].isCollidable
-      ) {
-        player.x--;
-        document.getElementById("description-text").innerHTML =
-          "You move forward.";
-      } else {
-        document.getElementById("description-text").innerHTML =
-          "You can't move here.";
-      }
-    } else if (player.direction === "north" && player.y > 0) {
-      if (
-        !world.map[getIndexFromPosition(player.x, player.y - 1, player.z)].isCollidable
-      ) {
+    if (player.canMoveForward()) {
+      if (player.direction === "north") {
         player.y--;
-        document.getElementById("description-text").innerHTML =
-          "You move forward.";
-      } else {
-        document.getElementById("description-text").innerHTML =
-          "You can't move here.";
-      }
-    } else if (player.direction === "east" && player.x < MAP_SIZE - 1) {
-      if (
-        !world.map[getIndexFromPosition(player.x + 1, player.y, player.z)].isCollidable
-      ) {
+      } else if (player.direction === "east") {
         player.x++;
-        document.getElementById("description-text").innerHTML =
-          "You move forward.";
-      } else {
-        document.getElementById("description-text").innerHTML =
-          "You can't move here.";
-      }
-    } else if (player.direction === "south" && player.y < MAP_SIZE - 1) {
-      if (
-        !world.map[getIndexFromPosition(player.x, player.y + 1, player.z)].isCollidable
-      ) {
+      } else if (player.direction === "south") {
         player.y++;
-        document.getElementById("description-text").innerHTML =
-          "You move forward.";
-      } else {
-        document.getElementById("description-text").innerHTML =
-          "You can't move here.";
+      } else if (player.direction === "west") {
+        player.x--;
       }
+      document.getElementById("description-text").innerHTML =
+        "You move forward.";
+    } else {
+      document.getElementById("description-text").innerHTML =
+          "You can't move here.";
     }
     console.log(player.x + "," + player.y + " " + player.lanternLight);
     updateImage();
@@ -104,12 +72,7 @@ let player = {
       player.lanternLight--;
     }
 
-    if (
-      player.x === 3 &&
-      player.y === 11 &&
-      player.z === 1 &&
-      !player.hasShovel
-    ) {
+    if (player.x === 3 && player.y === 11 && player.z === 1 && !player.hasShovel) {
       document.getElementById("description-text").innerHTML =
         "You found a shovel!";
       player.hasShovel = true;
@@ -123,23 +86,34 @@ let player = {
     }
     this.caveLogic();
   },
-  caveLogic: function () {
-    if (
-      (player.x === 14 && player.y === 9) ||
-      (player.x === 1 && player.y === 10) ||
-      (player.x === 15 && player.y === 10) ||
-      (player.x === 13 && player.y === 13) ||
-      (player.x === 10 && player.y === 15)
-    ) {
-      if (player.z === 1) {
-        player.z--;
-        document.getElementById("description-text").innerHTML =
-          "You enter a cave.";
-      } else {
-        player.z++;
-        document.getElementById("description-text").innerHTML =
-          "You left the cave.";
+  canMoveForward: function () {
+    if (player.direction === "west" && player.x > 0) {
+      if (!world.map[getIndexFromPosition(player.x - 1, player.y, player.z)].isCollidable) {
+        return true;
+      }
+    } else if (player.direction === "north" && player.y > 0) {
+      if (!world.map[getIndexFromPosition(player.x, player.y - 1, player.z)].isCollidable) {
+        return true;
+      }
+    } else if (player.direction === "east" && player.x < MAP_SIZE - 1) {
+      if (!world.map[getIndexFromPosition(player.x + 1, player.y, player.z)].isCollidable) {
+        return true;
+      }
+    } else if (player.direction === "south" && player.y < MAP_SIZE - 1) {
+      if (!world.map[getIndexFromPosition(player.x, player.y + 1, player.z)].isCollidable) {
+        return true;
       }
     }
+    return false;
   },
+  caveLogic: function () {
+    if (player.isAtCaveEntrance()) {
+      player.z ^= 1;
+    }
+  },
+  isAtCaveEntrance: function () { 
+    return ((player.x === 14 && player.y === 9) ||(player.x === 1 && player.y === 10) ||
+    (player.x === 15 && player.y === 10) || (player.x === 13 && player.y === 13) ||
+    (player.x === 10 && player.y === 15)); 
+  }
 };
