@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exploration Game - Map</title>
+    <h3>You can fill out a map of where you've been here.</h3>
+  </head>
+  <body>
+    <p id = "selected">Selected: plains / none</p>
+    <div id = "map-container"></div>
+    <button id = "select-plains" class = "select-button" onclick="changeTerrain('plains')">Plains</button>
+    <button id = "select-forest" class = "select-button" onclick="changeTerrain('forest')">Forest</button>
+    <button id = "select-hill" class = "select-button" onclick="changeTerrain('hill')">Hill</button>
+    <button id = "select-cliff" class = "select-button" onclick="changeTerrain('cliff')">Cliff</button>
+    <button id = "select-cave" class = "select-button" onclick="changeTerrain('cave')">Cave</button>
+
+    <button id = "select-none" class = "select-button" onclick="changeFeature('none')">None [ ]</button>
+    <button id = "select-torch" class = "select-button" onclick="changeFeature('torch')">Torch [V]</button>
+    <button id = "select-shovel" class = "select-button" onclick="changeFeature('shovel')">Shovel Spot [S]</button>
+    <button id = "select-chest" class = "select-button" onclick="changeFeature('chest')">Treasure Chest [C]</button>
+    <style>
+      #map-container {
+        width: 50%;
+        height: 60%;
+        position: absolute;
+        left: 25%;
+        top: 15%;
+        border: 2px solid whitesmoke;
+      }
+      body {
+        font-family: arial;
+        background-color: black;
+        color: white;
+        font-size: 20px;
+        text-align: center;
+      }
+      .map-tile {
+        font-size: 10px;
+        line-height: 20px;
+        border: 2px solid whitesmoke;
+        position: absolute;
+      }
+      .select-button {
+        width: 10%;
+        position: absolute;
+        right: 10%;
+      }
+      #select-plains {
+        top: 25%;
+      }
+      #select-forest {
+        top: 30%;
+      }
+      #select-hill {
+        top: 35%;
+      }
+      #select-cliff {
+        top: 40%;
+      }
+      #select-cave {
+        top: 45%;
+      }
+      #select-none {
+          top: 50%;
+      }
+      #select-torch {
+        top: 55%;
+      }
+      #select-shovel {
+        top: 60%;
+      }
+      #select-chest {
+        top: 65%;
+      }
+    </style>
+    <script>
+        let MAP_SIZE = 20;
+        let selectedTerrain = "plains", selectedFeature = "none";
+
+        let changeTerrain = function (terrain) { 
+            selectedTerrain = terrain; 
+            document.getElementById("selected").innerHTML = "Selected: " + selectedTerrain + " / " + selectedFeature; 
+        }
+        let changeFeature = function (feature) { 
+            selectedFeature = feature;
+            document.getElementById("selected").innerHTML = "Selected: " + selectedTerrain + " / " + selectedFeature; 
+        }
+
+        let changeMapTile = function (i) {
+            console.log("set tile " + i);
+            let div = document.getElementById("map-tile-" + i);
+            if (selectedTerrain === "plains") {
+                div.style.backgroundColor = "limegreen";
+            } else if (selectedTerrain === "forest") {
+                div.style.backgroundColor = "forestgreen";
+            } else if (selectedTerrain === "hill") {
+                div.style.backgroundColor = "olivedrab";
+            } else if (selectedTerrain === "cliff") {
+                div.style.backgroundColor = "darkgrey";
+            } else if (selectedTerrain === "cave") {
+                div.style.backgroundColor = "orange";
+            }
+
+            if (selectedFeature === "none") {
+                div.innerHTML = "";
+            } else if (selectedFeature === "torch") {
+                div.innerHTML = "V";
+            } else if (selectedFeature === "shovel") {
+                div.innerHTML = "S";
+            } else if (selectedFeature === "chest") {
+                div.innerHTML = "C";
+            }
+        }
+
+        let createMap = function () {
+            for (let i = 0; i < MAP_SIZE * MAP_SIZE; i++) {
+                let x = i % MAP_SIZE, y = Math.floor(i / MAP_SIZE);
+                var div = document.createElement("div");
+                div.id = "map-tile-" + i;
+                div.className = "map-tile";
+                div.style.width = (100 / MAP_SIZE) + "%";
+                div.style.height = (100 / MAP_SIZE) + "%";
+                div.style.left = (x * (100 / MAP_SIZE)) + "%";
+                div.style.top = (y * (100 / MAP_SIZE)) + "%";
+
+                document.getElementById("map-container").appendChild(div);
+                document.getElementById("map-tile-" + i).onclick = function () { changeMapTile (i); };
+            }
+        }
+
+        createMap();
+    </script>
+  </body>
+</html>

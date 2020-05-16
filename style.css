@@ -42,6 +42,11 @@
     position: absolute;
     right: 5%;
   }
+  #map {
+    position: absolute;
+    right: 5%;
+    top: 5%;
+  }
   body {
     font-family: arial;
     background-color: black;
